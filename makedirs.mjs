@@ -1,8 +1,9 @@
 //create a directory structure based around the themes, card types, and rarities
 import fs from 'fs'
 
-
-fs.mkdirSync('./cardLibrary')
+if (!fs.existsSync('./cardLibrary')) {
+    fs.mkdirSync('./cardLibrary')
+}
 const themes = ['Mystic Swamp', 'Great Undersea Reef', 'Celestial Empires']
 //create subtheme types nested in the theme folder
 const subthemes = {
@@ -14,11 +15,19 @@ const subthemes = {
 const rarities = ['common', 'uncommon', 'rare', 'epic', 'legendary']
 
 themes.forEach(theme => {
-    fs.mkdirSync(`./cardLibrary/${theme}`)
+    const themePath = `./cardLibrary/${theme}`
+    if (!fs.existsSync(themePath)) {
+        fs.mkdirSync(themePath)
+    }
     subthemes[theme].forEach(subtheme => {
-        fs.mkdirSync(`./cardLibrary/${theme}/${subtheme}`)
+        const subthemePath = `./cardLibrary/${theme}/${subtheme}`
+        if (!fs.existsSync(subthemePath)) {
+            fs.mkdirSync(subthemePath)
+        }
         rarities.forEach(rarity => {
-            fs.mkdirSync(`./cardLibrary/${theme}/${subtheme}/${rarity}`)
+            if (!fs.existsSync(`./cardLibrary/${theme}/${subtheme}/${rarity}`)) {
+                fs.mkdirSync(`./cardLibrary/${theme}/${subtheme}/${rarity}`)
+            }
         })
     })
 })

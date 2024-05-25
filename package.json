@@ -1,6 +1,12 @@
 {
   "dependencies": {
+    "cors": "^2.8.5",
     "dotenv": "^16.4.5",
-    "openai": "^4.47.1"
+    "express": "^4.19.2",
+    "node-cron": "^3.0.3",
+    "openai": "^4.47.1",
+    "sharp": "^0.33.4",
+    "standard": "^17.1.0",
+    "three": "^0.164.1"
   }
 }

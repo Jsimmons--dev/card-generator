@@ -5,10 +5,14 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-const openai = new OpenAI( { apiKey: process.env.OPENAI_API_KEY } );
+import cron from 'node-cron'
 
-const themes =
-`Mystic Swamp:
+cron.schedule('*/5 * * * *', async () => {
+
+    const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+
+    const themes =
+        `Mystic Swamp:
 
 Setting: A mysterious and enchanting swamp filled with magical flora and fauna. The swamp is shrouded in mist, with glowing plants, ancient trees, and hidden secrets beneath the murky waters.
 Card Types: Swamp Witches, Mystical Beasts, Enchanted Artifacts, Swamp Spells, and Hidden Groves.
@@ -28,26 +32,26 @@ Art Style: Bright, ethereal visuals with a focus on cosmic elements like stars, 
 `
 
 
-const themeNames = ["Mystic Swamp", "Great Undersea Reef", "Celestial Empires"]
-// create a map of cardTypes under themes
-const cardTypes = {
-    "Mystic Swamp": ["Swamp Witches", "Mystical Beasts", "Enchanted Artifacts", "Swamp Spells", "Hidden Groves"],
-    "Great Undersea Reef": ["Sea Guardians", "Exotic Marine Creatures", "Sunken Treasures", "Water Magic", "Coral Reefs"],
-    "Celestial Empires": ["Stellar Monarchs", "Cosmic Beasts", "Starships", "Celestial Artifacts", "Galactic Locations"]
-}
+    const themeNames = ["Mystic Swamp", "Great Undersea Reef", "Celestial Empires"]
+    // create a map of cardTypes under themes
+    const cardTypes = {
+        "Mystic Swamp": ["Swamp Witches", "Mystical Beasts", "Enchanted Artifacts", "Swamp Spells", "Hidden Groves"],
+        "Great Undersea Reef": ["Sea Guardians", "Exotic Marine Creatures", "Sunken Treasures", "Water Magic", "Coral Reefs"],
+        "Celestial Empires": ["Stellar Monarchs", "Cosmic Beasts", "Starships", "Celestial Artifacts", "Galactic Locations"]
+    }
 
-const rarities = ["common", "uncommon", "rare", "epic", "legendary"]
-const rarityWeights = [.30, .25, .20, .15, .10]
+    const rarities = ["common", "uncommon", "rare", "epic", "legendary"]
+    const rarityWeights = [.30, .25, .20, .15, .10]
 
-//pick a theme at random
-const theme = themeNames[Math.floor(Math.random() * themeNames.length)]
-//pick a cardType at random
-const cardType = cardTypes[theme][Math.floor(Math.random() * cardTypes[theme].length)]
-//pick a rarity at random using the weights
-const rarity = rarities.find((_, i) => Math.random() < rarityWeights.slice(0, i + 1).reduce((a, b) => a + b))
+    //pick a theme at random
+    const theme = themeNames[Math.floor(Math.random() * themeNames.length)]
+    //pick a cardType at random
+    const cardType = cardTypes[theme][Math.floor(Math.random() * cardTypes[theme].length)]
+    //pick a rarity at random using the weights
+    const rarity = rarities.find((_, i) => Math.random() < rarityWeights.slice(0, i + 1).reduce((a, b) => a + b))
 
-const ask =
-`
+    const ask =
+        `
 Add elements to the prompt to add a flair of rarity. 
 The rarities are common (30%), uncommon (25%), rare (20%), epic (15%), and legendary (10%).
 Add flair for the rarity of the card. common cards should be interesting and generally whimsical and fantastical, while legendary cards should be grand and awe-inspiring.
@@ -60,40 +64,41 @@ Output in the following JSON properties: { rarity, theme, cardType, cardName, pr
 `
 
 
-const completion = await openai.chat.completions.create({
-    messages: [{ role: "system", content: themes + ask }],
-    model: "gpt-4o",
-    response_format: { type: "json_object" }
-  });
+    const completion = await openai.chat.completions.create({
+        messages: [{ role: "system", content: themes + ask }],
+        model: "gpt-4o",
+        response_format: { type: "json_object" }
+    });
 
-const card = JSON.parse(completion.choices[0].message.content)
+    const card = JSON.parse(completion.choices[0].message.content)
 
-//make a directory in the cards folder with random hashed name
-const cardId = Math.random().toString(36)
-const dir = `./cardLibrary/${card.theme}/${card.cardType}/${card.rarity}/${cardId}`
-console.log(dir)
-fs.mkdirSync(dir)
+    //make a directory in the cards folder with random hashed name
+    const cardId = Math.random().toString(36)
+    const dir = `./cardLibrary/${card.theme}/${card.cardType}/${card.rarity}/${cardId}`
+    console.log(dir)
+    fs.mkdirSync(dir)
 
-const response = await openai.images.generate({
-    model: "dall-e-3",
-    prompt: completion.choices[0].message.content,
-    n: 1,
-    size: "1024x1024",
-});
+    const response = await openai.images.generate({
+        model: "dall-e-3",
+        prompt: completion.choices[0].message.content,
+        n: 1,
+        size: "1024x1024",
+    });
 
-const artUrl = response.data[0].url
-//write artUrl to stats.json
-card.artUrl
-fs.writeFileSync(dir + '/stats.json', JSON.stringify(card))
+    const artUrl = response.data[0].url
+    //write artUrl to stats.json
+    card.artUrl
+    fs.writeFileSync(dir + '/stats.json', JSON.stringify(card))
 
-const fileName = `${dir}/art.png`
-const file = fs.createWriteStream(fileName);
-const request = https.get(artUrl, function(response) {
-   response.pipe(file);
+    const fileName = `${dir}/art.png`
+    const file = fs.createWriteStream(fileName);
+    const request = https.get(artUrl, function (response) {
+        response.pipe(file);
 
-   // after download completed close filestream
-   file.on("finish", () => {
-       file.close();
-       console.log("Download Completed");
-   });
+        // after download completed close filestream
+        file.on("finish", () => {
+            file.close();
+            console.log("Download Completed");
+        });
+    });
 });

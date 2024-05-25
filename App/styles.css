@@ -1,0 +1,12 @@
+body,html {
+    overflow: clip;
+    margin: 0;
+}
+
+:root {
+--main-black: #252627; /* Eerie Black */
+--main-purple: #6761A8; /* Ultra Violet */
+--main-orange: #FD5A1E; /* Giants Orange */
+--main-offwhite: #F5FBEF; /* Ivory */
+--main-green: #00FF7F; /* Spring Green */
+}
