@@ -38,19 +38,19 @@ const libraryData = {}
 const cardIndex = {}
 walk('./cardLibrary', (err, list) => {
     for (let file of list.filter(file => file.endsWith('.json'))) {
-        let [drive, UsersDir, user, src, lib, dir, theme, cardType, rarity, cardId] = file.split('\\')
+        let [drive, UsersDir, user, src, lib, dir, theme, cardType, rarity, cardId] = file.split('/')
         let data = JSON.parse(fs.readFileSync(file))
         cardIndex[cardId] = data
         if (!libraryData[theme]) {
-            libraryData[theme] = {}
+            libraryData[theme] = { theme }
         }
         if (!libraryData[theme][cardType]) {
-            libraryData[theme][cardType] = {}
+            libraryData[theme][cardType] = {cardType}
         }
         if (!libraryData[theme][cardType][rarity]) {
-            libraryData[theme][cardType][rarity] = []
+            libraryData[theme][cardType][rarity] = { rarity, cards:[]}
         }
-        libraryData[theme][cardType][rarity].push({ ...data, cardId })
+        libraryData[theme][cardType][rarity].cards.push({ ...data, cardId })
     }
     const numCards = Object.keys(cardIndex).length
 
@@ -76,17 +76,34 @@ walk('./cardLibrary', (err, list) => {
 
 })
 
+var options = {
+    dotfiles: 'ignore',
+    etag: false,
+    extensions: ['htm', 'html'],
+    index: false,
+    maxAge: '1d',
+    redirect: false,
+    setHeaders: function (res, path, stat) {
+        res.set('x-timestamp', Date.now())
+    }
+}
+
+app.use('/cardLibrary', express.static('./cardLibrary', options))
+
+
+
+app.get('/library', (req, res) => {
+    res.send(libraryData)
+})
 
 app.get('/:cardId', (req, res) => {
     const cardId = req.params.cardId
     const card = cardIndex[cardId]
     if (card) {
         res.send(card)
+    } else {
+        res.status(404).send('Card not found')
     }
-})
-
-app.get('/library', (req, res) => {
-    res.send(libraryData)
 })
 
 app.listen(port, () => {

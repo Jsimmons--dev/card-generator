@@ -12,5 +12,17 @@ export const colorsHex = {
     mainPurple: 0x6761A8, /* Ultra Violet */
     mainOrange: 0xFD5A1E, /* Giants Orange */
     mainOffwhite: 0xF5FBEF, /* Ivory */
+    mainGrey: 0x424651, /* Grey */
+    mainBlue: 0x3185FC, /* Maya Blue */
     mainGreen: 0x00FF7F /* Spring Green */
 }
+
+export const textColorsHex = {
+    white: 0xFFFFFF,
+    green: 0x00FF7F, /* Spring Green */
+    blue: 0x3185FC, /* Maya Blue */
+    purple: 0x6761A8, /* Ultra Violet */
+    orange: 0xFD5A1E, /* Giants Orange */
+}
+
+export const backendUrl = 'http://localhost:3000'
