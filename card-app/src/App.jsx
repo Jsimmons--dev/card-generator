@@ -1,8 +1,11 @@
 import { useState } from 'react'
+import { auth, provider } from './authProvider.js'
+import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+
 import './App.css'
 
 import * as React from 'react'
-import { Provider } from 'react-redux'
+import { Provider, useDispatch } from 'react-redux'
 import Home from './Home';
 
 import {
@@ -15,17 +18,27 @@ const router = createBrowserRouter([
     path: "/",
     element: <Home />,
   },
+  {
+    path: "/card-viewer/:cardId",
+    element: <CardViewer />,
+  },
 ]);
 
-import { store } from './store'
+import CardViewer from './CardViewer';
+import { useSignInWithGoogle } from 'react-firebase-hooks/auth';
 
 function App() {
+  const dispatch = useDispatch()
+
+  const [signInWithGoogle, user, loading, error] = useSignInWithGoogle(auth);
 
   return (
     <>
-      <Provider store={store}>
-        <RouterProvider router={router}/>
-      </Provider>
+      {loading && <div>Loading...</div>}
+      {!user && !loading && <button onClick={() => signInWithGoogle()}>Sign in with Google</button>}
+      {user && !loading &&
+        <RouterProvider router={router} />
+      }
     </>
   )
 }
