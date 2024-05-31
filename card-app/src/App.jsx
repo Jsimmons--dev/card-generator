@@ -1,6 +1,9 @@
 import { useState } from 'react'
 import { auth, provider } from './authProvider.js'
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import CardViewer from './CardViewer';
+import { useSignInWithGoogle } from 'react-firebase-hooks/auth';
+import CardOpener from './CardOpener';
 
 import './App.css'
 
@@ -22,10 +25,12 @@ const router = createBrowserRouter([
     path: "/card-viewer/:cardId",
     element: <CardViewer />,
   },
+  {
+    path: "/card-opener/:cardId",
+    element: <CardOpener />,
+  },
 ]);
 
-import CardViewer from './CardViewer';
-import { useSignInWithGoogle } from 'react-firebase-hooks/auth';
 
 function App() {
   const dispatch = useDispatch()
