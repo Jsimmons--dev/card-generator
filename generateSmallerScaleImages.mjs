@@ -30,13 +30,13 @@ var walk = function (dir, done) {
 
 walk('./cardLibrary', (err, list) => {
     for (let file of list.filter(file => file.endsWith('.png'))) {
-        let [drive, UsersDir, user, src, lib, dir, theme, cardType, rarity, cardId] = file.split('\\')
-        let cardPathExceptFile = file.split('\\').slice(0, -1).join('\\')
+        let [drive, UsersDir, user, src, lib, dir, theme, cardType, rarity, cardId] = file.split('/')
+        let cardPathExceptFile = file.split('/').slice(0, -1).join('/')
         //if the small art doesn't already exist
-        if(!fs.existsSync(`${cardPathExceptFile}\\art_small.webp`)){
+        if(!fs.existsSync(`${cardPathExceptFile}/art_small.webp`)){
             const resizedImage = sharp(file)
                 .resize(256, 256)
-                .toFile(`${cardPathExceptFile}\\art_small.webp`)
+                .toFile(`${cardPathExceptFile}/art_small.webp`)
         }
     }
 })

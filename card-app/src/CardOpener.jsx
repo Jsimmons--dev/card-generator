@@ -7,7 +7,6 @@ export default function CardOpener({ }) {
     const [user] = useAuthState(auth);
     const { cardId } = useParams()
     const { data, error, isLoading } = useGetCardByOwnerQuery({ email: user.email, docId: cardId })
-    console.log(isLoading, data)
     return (
         <div>
             {isLoading && <div>Loading...</div>}

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { auth, provider } from './authProvider.js'
 import { signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import CardViewer from './CardViewer';
-import { useSignInWithGoogle } from 'react-firebase-hooks/auth';
+import { useAuthState, useSignInWithGoogle, useSignOut } from 'react-firebase-hooks/auth';
 import CardOpener from './CardOpener';
 
 import './App.css'
@@ -35,14 +35,19 @@ const router = createBrowserRouter([
 function App() {
   const dispatch = useDispatch()
 
-  const [signInWithGoogle, user, loading, error] = useSignInWithGoogle(auth);
+  const [user, loading, error] = useAuthState(auth);
+  const [signInWithGoogle] = useSignInWithGoogle(auth);
+  const [signOut, loadingSignOut, errorSignOut] = useSignOut(auth);
 
   return (
     <>
       {loading && <div>Loading...</div>}
       {!user && !loading && <button onClick={() => signInWithGoogle()}>Sign in with Google</button>}
       {user && !loading &&
+      <>
         <RouterProvider router={router} />
+      {<button style={{position:'absolute', top:0, left:0, margin:'15px'}} onClick={() => signOut()}>Sign out</button>}
+        </>
       }
     </>
   )

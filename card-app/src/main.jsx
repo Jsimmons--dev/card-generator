@@ -5,6 +5,7 @@ import './index.css'
 import { getAnalytics } from "firebase/analytics";
 import { app } from './firebaseConfig.js'
 
+
 import { store } from './store'
 import { Provider } from 'react-redux';
 

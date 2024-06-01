@@ -12,7 +12,7 @@ export const cardApi = createApi({
         try {
           const docRef = doc(db, "users", email, 'cards', `${docId}`);
           const docSnap = await getDoc(docRef);
-          return { data: docSnap.data() }
+          return { data: { docId: docSnap.id, ...docSnap.data() } }
         } catch (err) {
           console.log(err)
         }
@@ -34,6 +34,7 @@ export const cardApi = createApi({
           await updateDoc(docRef, {
             opened: true
           });
+          return { data: { message: 'success' } }
         } catch (err) {
           console.log(err)
         }
