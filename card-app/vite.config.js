@@ -1,31 +1,49 @@
-import react from "@vitejs/plugin-react";
-import { defineConfig } from "vite";
+import { defineConfig } from 'vite';
+import vue from '@vitejs/plugin-vue';
+import { VitePWA } from 'vite-plugin-pwa';
 
-export default defineConfig(({ command }) => {
-  if (command === "serve") {
-    return {
-      plugins: [react()],
-    };
-  } else {
-    // command === 'build'
-    return {
-      plugins: [react()],
-      build: {
-        target: "es2022",
-        rollupOptions: {
-          input: {
-            "main": "./index.html",
-            "firebase-messaging-sw": "./src/firebase-messaging-sw.js",
-          },
-          output: {
-            entryFileNames: (chunkInfo) => {
-              return chunkInfo.name === "firebase-messaging-sw"
-                ? "[name].js" // Output service worker in root
-                : "assets/[name]-[hash].js"; // Others in `assets/`
-            },
-          },
-        },
+export default defineConfig({
+  base: '',
+  plugins: [
+    vue(),
+    VitePWA({
+      mode: 'development',
+      injectManifest: {
+        globPatterns: ['**/*'],
       },
-    };
-  }
+      strategies: 'injectManifest',
+      srcDir: 'public',
+      filename: 'firebase-messaging-sw.mjs',
+      manifest: {
+        name: 'D-RSS',
+        short_name: 'D-RSS',
+        theme_color: '#06091c',
+        display: 'standalone',
+        background_color: '#06091c',
+        icons: [
+          {
+            src: 'logo-48-48.png',
+            sizes: '48x48',
+            type: 'image/png',
+          },
+          {
+            src: 'logo-96-96.png',
+            sizes: '96x96',
+            type: 'image/png',
+          },
+          {
+            src: 'logo-512-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+          },
+          {
+            src: 'logo-512-512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any maskable',
+          },
+        ],
+      },
+    })
+  ],
 });
