@@ -3,6 +3,8 @@ import { useParams } from "react-router-dom"
 import { auth } from "./authProvider";
 import { useGetCardByOwnerQuery } from "./services/cards";
 import { messaging } from './firebaseConfig.js'
+import { useState } from "react";
+import { getToken } from "firebase/messaging";
 
 export default function CardViewer({ }) {
     const [user] = useAuthState(auth);
