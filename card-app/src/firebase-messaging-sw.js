@@ -1,5 +1,5 @@
-importScripts("https://www.gstatic.com/firebasejs/8.0.0/firebase-app.js");
-importScripts("https://www.gstatic.com/firebasejs/8.0.0/firebase-messaging.js");
+importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-app.js")
+importScripts("https://www.gstatic.com/firebasejs/10.12.2/firebase-messaging.js")
 const swScriptUrl = new URL(self.location);
 
 const base64Config = swScriptUrl.searchParams.get('firebaseConfig')
