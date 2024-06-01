@@ -33,10 +33,7 @@ onBackgroundMessage(messaging, (payload) => {
     '[firebase-messaging-sw.js] Received background message ',
     payload
   )
-
-  payload.waitUntil(
-    self.registration.showNotification(notificationTitle, notificationOptions)
-  )
+  return self.registration.showNotification(notificationTitle, notificationOptions)
 })
 
 onMessage(messaging, (payload) => {
